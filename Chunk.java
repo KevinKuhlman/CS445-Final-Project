@@ -42,7 +42,8 @@ public class Chunk {
     }
 
     public void rebuildMesh(float startX, float startY, float startZ) {
-        SimplexNoise noise = new SimplexNoise(30,0.3,0);        
+        r = new Random();
+        SimplexNoise noise = new SimplexNoise(30,0.15,r.nextInt());        
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
@@ -53,9 +54,24 @@ public class Chunk {
         int a = 0;
         for (float x = 0; x < CHUNK_SIZE; x += 1) {
             for (float z = 0; z < CHUNK_SIZE; z += 1) {
-                
-                double height = (startY + (int)(7.5*(1+noise.getNoise((int)x,(int)z))*CUBE_LENGTH));
+                double height = (startY + (int)(7*(1+noise.getNoise((int)x,(int)z))*CUBE_LENGTH));
                 for(float y = 0; y < height; y++){
+                if(y < 3)
+                    Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(5);
+                else if(y < height-3)
+                    Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(4);
+                else if(y < height-1)
+                    Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(3);
+                else{
+                    if(x < 4 && z < 4)
+                        Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(2);
+                    else if(x == 4 && z < 4)
+                       Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(1);
+                    else if(z==4 && x<4)
+                       Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(1);
+                    else
+                       Blocks[(int)(x)][(int) (y)][(int) (z)].SetID(0);
+                }
                 VertexPositionData.put(createCube((float) (startX + x* CUBE_LENGTH),(float)(y*CUBE_LENGTH+(int)(CHUNK_SIZE*.8)),(float) (startZ + z *CUBE_LENGTH)));
                 VertexColorData.put(createCubeVertexCol(getCubeColor(Blocks[(int) x][(int) y][(int) z])));
                 VertexTextureData.put(createTexCube((float) 0, (float) 0,Blocks[(int)(x)][(int) (y)][(int) (z)]));
