@@ -1,8 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/***************************************************************
+* file: Basic3D.java
+* author: Karen Cheung, Mark Erickson, Kevin Kuhlman
+* class: CS 445 - Computer Graphics
+*
+* assignment: Final Program Checkpoint 2 
+* date last modified: 5/31/2016
+*
+* purpose: This program displays a chunk of cubes with 6 different block types with randomly generated terrain.
+*
+****************************************************************/ 
 package cs.pkg445.pkgfinal.project;
 
 

@@ -4,7 +4,7 @@
 * class: CS 445 - Computer Graphics
 *
 * assignment: Final Program Checkpoint 2 
-* date last modified: 5/17/2016
+* date last modified: 5/31/2016
 *
 * purpose: This program displays a chunk of cubes with 6 different block types with randomly generated terrain.
 *
@@ -21,6 +21,8 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+//Class: Chunk
+//Purpose: Instance of the world for the program
 public class Chunk {
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
@@ -32,6 +34,8 @@ public class Chunk {
     private int VBOTextureHandle;
     private Texture texture;
     
+    //Method: Chunk (Constructor)
+    //Purpose: Instantiate the chunk object
     public Chunk(int startX, int startY, int startZ) {
     	try{
     		texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("C:\\Users\\Kevin\\Documents\\NetBeansProjects\\CS 445 Final Project\\src\\cs\\pkg445\\pkgfinal\\project\\terrain.png"));
@@ -60,6 +64,8 @@ public class Chunk {
         rebuildMesh(startX, startY, startZ);
     }
     
+    //Method: render
+    //Purpose: renders the chunk into the world
     public void render(){
         glPushMatrix();
             glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
@@ -73,6 +79,8 @@ public class Chunk {
             glPopMatrix();
     }
 
+    //Method: rebuildMesh
+    //Purpose: creates all of the blocks and their placement
      public void rebuildMesh(float startX, float startY, float startZ) {
         r = new Random();
         float min = 0.0f;
@@ -118,6 +126,21 @@ public class Chunk {
                 }
             }
         }
+        
+        for (int j = 0; j < r.nextInt(15); j++) {
+             int treeX = r.nextInt(30);
+             int treeZ = r.nextInt(30);
+             float treeY = (startY + (int) (7 * (1 + noise.getNoise((int) treeX, (int) treeZ)) * CUBE_LENGTH));
+             for (int i = 0; i < r.nextInt(15); i++) {
+                 Blocks[(int) (treeX)][(int) (treeY)][(int) (treeZ)].SetID(6);
+                 VertexPositionData.put(createCube((float) (startX + treeX * CUBE_LENGTH), (float) (startY + treeY * CUBE_LENGTH), (float) (startZ + treeZ * CUBE_LENGTH)));
+                 VertexColorData.put(createCubeVertexCol(getCubeColor(Blocks[(int) treeX][(int) treeY][(int) treeZ])));
+                 VertexTextureData.put(createTexCube((float) 0, (float) 0, Blocks[(int) (treeX)][(int) (treeY)][(int) (treeZ)]));
+                 Blocks[(int) treeX][(int) treeY][(int) treeZ].SetActive(true);
+                 treeY++;
+             }
+
+         }
         VertexTextureData.flip();
         VertexColorData.flip();
         VertexPositionData.flip();
@@ -133,6 +156,8 @@ public class Chunk {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }   
      
+    //Method: createCubeVertexCol
+    //Purpose: Sets and returns the colors for the cube
     private float[] createCubeVertexCol(float[] CubeColorArray) {
         float[] cubeColors = new float[CubeColorArray.length * 4 * 6];
         for (int i = 0; i < cubeColors.length; i++) {
@@ -142,6 +167,8 @@ public class Chunk {
     return cubeColors;
     }
     
+    //Method: CreateCube
+    //Purpose: Creates the cube object based off the given info
     public static float[] createCube(float x, float y,float z) {
         int offset = CUBE_LENGTH / 2;
         return new float[] {
@@ -177,6 +204,8 @@ public class Chunk {
             x + offset, y - offset, z };
     }
     
+    //Method: getCubeColor
+    //Purpose: returns the color of the cube
     private float[] getCubeColor(Block block) {
 //    switch (block.GetID()) {
 //        case 1:
@@ -189,6 +218,8 @@ public class Chunk {
     return new float[] { 1, 1, 1 };
     }
     
+    //Method: createTexCube
+    //Purpose: creates the textures for the cube
     public static float[] createTexCube(float x, float y, Block block) {
         float offset = (1024f / 16) / 1024f;
         switch (block.GetID()) {
@@ -385,70 +416,70 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2};
-            case 6: // Wood block texture
+                        case 6: // Wood block texture
                 return new float[]{
                     // BOTTOM QUAD(DOWN=+Y)
-                    x + offset * 5, y + offset * 9,
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 4, y + offset * 8,
-                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 2,
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 5, y + offset * 1,
+                    x + offset * 6, y + offset * 1,
                     // TOP!
-                    x + offset * 5, y + offset * 9,
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 4, y + offset * 8,
-                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 2,
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 5, y + offset * 1,
+                    x + offset * 6, y + offset * 1,
                     // FRONT QUAD
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    x + offset * 3, y + offset * 8,
-                    x + offset * 4, y + offset * 8,
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 4, y + offset * 2,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 5, y + offset * 1,
                     // BACK QUAD
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    x + offset * 3, y + offset * 8,
-                    x + offset * 4, y + offset * 8,
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 4, y + offset * 2,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 5, y + offset * 1,
                     // LEFT QUAD
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    x + offset * 3, y + offset * 8,
-                    x + offset * 4, y + offset * 8,
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 4, y + offset * 2,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 5, y + offset * 1,
                     // RIGHT QUAD
-                    x + offset * 4, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    x + offset * 3, y + offset * 8,
-                    x + offset * 4, y + offset * 8};
+                    x + offset * 5, y + offset * 2,
+                    x + offset * 4, y + offset * 2,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 5, y + offset * 1};
             case 7: // Leaves block texture
                 return new float[]{
                     // BOTTOM QUAD(DOWN=+Y)
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6,
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8,
                     // TOP!
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6,
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8, 
                     // FRONT QUAD
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6,
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8,
                     // BACK QUAD
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6,
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8,
                     // LEFT QUAD
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6, 
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8,
                     // RIGHT QUAD
-                    x + offset * 5, y + offset * 7,
-                    x + offset * 4, y + offset * 7,
-                    x + offset * 4, y + offset * 6,
-                    x + offset * 5, y + offset * 6};
+                    x + offset * 6, y + offset * 9,
+                    x + offset * 5, y + offset * 9,
+                    x + offset * 5, y + offset * 8,
+                    x + offset * 6, y + offset * 8};
 
         }
     }

@@ -4,7 +4,7 @@
 * class: CS 445 - Computer Graphics
 *
 * assignment: Final Program Checkpoint 2 
-* date last modified: 5/17/2016
+* date last modified: 5/31/2016
 *
 * purpose: This program displays a chunk of cubes with 6 different block types with randomly generated terrain.
 *
@@ -19,7 +19,12 @@ import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 
+
+//Class: FPCamera
+//Purpose: Instance of the user-camera for the program
 public class FPCamera {
 
     private Vector3f position = null;
@@ -106,9 +111,13 @@ public class FPCamera {
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
         glRotatef(yaw, 0.0f, 1.0f, 0.0f);
         glTranslatef(position.x, position.y, position.z);
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(20.0f).put(50.0f).put(30).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
-    
+    //Method: collision
+    //Purpose: Check whether or not to stop movement based on collision with an object
     public boolean collision(float distance, int key){
         int check = 0;
         float nextX = Math.round(position.x); 
